@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>718Digital — Plan de Prospection</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0A0A0F;
+    --surface: #13131A;
+    --surface2: #1C1C26;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.14);
+    --text: #F0EFF8;
+    --muted: #7B7A8E;
+    --accent: #FF6B35;
+
+    --p1: #7C3AED; --p1l: rgba(124,58,237,0.12);
+    --p2: #0EA5E9; --p2l: rgba(14,165,233,0.12);
+    --p3: #F59E0B; --p3l: rgba(245,158,11,0.12);
+    --p4: #10B981; --p4l: rgba(16,185,129,0.12);
+    --p5: #EC4899; --p5l: rgba(236,72,153,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    padding: 2.5rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 500px; height: 200px;
+    background: radial-gradient(ellipse, rgba(255,107,53,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  .logo-badge {
+    background: var(--accent);
+    color: white;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 5px 10px;
+    border-radius: 4px;
+    letter-spacing: 1px;
+  }
+  .header-tag {
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: clamp(22px, 5vw, 32px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .header h1 span { color: var(--accent); }
+  .header p {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 480px;
+  }
+
+  /* KPI */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+  }
+  .kpi-n { font-size: 22px; font-weight: 700; font-family: 'Space Mono', monospace; color: var(--accent); }
+  .kpi-l { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  /* POLE NAV */
+  .pole-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: none;
+  }
+  .pole-nav::-webkit-scrollbar { display: none; }
+  .pole-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 40px;
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    color: var(--muted);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .pole-btn .dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+  }
+  .pole-btn:hover, .pole-btn.active {
+    color: var(--text);
+    background: var(--surface2);
+  }
+  .pole-btn.active { border-color: var(--border2); }
+  .pole-btn[data-pole="0"] .dot { background: var(--accent); }
+  .pole-btn[data-pole="1"] .dot { background: var(--p1); }
+  .pole-btn[data-pole="2"] .dot { background: var(--p2); }
+  .pole-btn[data-pole="3"] .dot { background: var(--p3); }
+  .pole-btn[data-pole="4"] .dot { background: var(--p4); }
+  .pole-btn[data-pole="5"] .dot { background: var(--p5); }
+  .pole-btn[data-pole="0"].active { border-color: var(--accent); color: var(--accent); }
+  .pole-btn[data-pole="1"].active { border-color: var(--p1); color: var(--p1); }
+  .pole-btn[data-pole="2"].active { border-color: var(--p2); color: var(--p2); }
+  .pole-btn[data-pole="3"].active { border-color: var(--p3); color: var(--p3); }
+  .pole-btn[data-pole="4"].active { border-color: var(--p4); color: var(--p4); }
+  .pole-btn[data-pole="5"].active { border-color: var(--p5); color: var(--p5); }
+
+  /* CONTENT */
+  .content { padding: 1.5rem; }
+  .pole-panel { display: none; }
+  .pole-panel.active { display: block; animation: fadeIn .25s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* POLE HEADER */
+  .pole-header {
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .pole-icon {
+    font-size: 32px;
+    min-width: 44px;
+    text-align: center;
+  }
+  .pole-header-text { flex: 1; min-width: 200px; }
+  .pole-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .pole-header p { font-size: 13px; opacity: .8; line-height: 1.5; }
+  .pole-stats {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+  .pole-stat {
+    background: rgba(0,0,0,0.3);
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* GRID */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* CARD */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: .3px;
+  }
+  .card-header .ico { font-size: 16px; }
+  .card-body { padding: 1rem; }
+
+  /* LIST */
+  .prospect-list { list-style: none; }
+  .prospect-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .prospect-list li:last-child { border-bottom: none; padding-bottom: 0; }
+  .prospect-list li::before {
+    content: '→';
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .prospect-name { font-weight: 600; display: block; margin-bottom: 1px; }
+  .prospect-desc { color: var(--muted); font-size: 12px; }
+
+  /* STEPS */
+  .steps { list-style: none; }
+  .steps li {
+    display: flex;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-txt strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .step-txt span { color: var(--muted); font-size: 12px; }
+
+  /* TAGS */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .tag {
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: 'Space Mono', monospace;
+    background: rgba(255,255,255,0.06);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* SCRIPT */
+  .script-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text);
+    position: relative;
+  }
+  .script-box::before {
+    content: '"';
+    font-size: 48px;
+    color: var(--border2);
+    position: absolute;
+    top: -8px; left: 12px;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+  .script-box p { text-indent: 20px; }
+
+  /* TIMELINE */
+  .timeline { position: relative; padding-left: 20px; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 5px; top: 8px; bottom: 8px;
+    width: 1px;
+    background: var(--border2);
+  }
+  .tl-item {
+    position: relative;
+    padding: 8px 0 8px 16px;
+    font-size: 13px;
+  }
+  .tl-item::before {
+    content: '';
+    position: absolute;
+    left: -15px; top: 14px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--muted);
+  }
+  .tl-item.key::before { background: var(--accent); }
+  .tl-item strong { display: block; font-weight: 600; margin-bottom: 2px; }
+  .tl-item span { color: var(--muted); font-size: 12px; }
+
+  /* TOOL BADGES */
+  .tool-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .tool {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+  }
+  .tool-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+  /* KPI MINI */
+  .kpi-mini-row {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .kpi-mini {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .6rem .75rem;
+    text-align: center;
+  }
+  .kpi-mini-n {
+    font-size: 18px;
+    font-weight: 700;
+    font-family: 'Space Mono', monospace;
+  }
+  .kpi-mini-l { font-size: 10px; color: var(--muted); margin-top: 2px; }
+
+  /* OBJECTION */
+  .obj-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .obj-card {
+    background: var(--surface2);
+    border-radius: 8px;
+    padding: .75rem;
+    font-size: 12px;
+  }
+  .obj-q { font-weight: 600; color: #FC8181; margin-bottom: 4px; font-size: 11px; }
+  .obj-a { color: var(--muted); line-height: 1.5; }
+
+  /* FOOTER */
+  .footer {
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+  }
+  .footer span { color: var(--accent); }
+
+  @media (max-width: 480px) {
+    .kpi-row { grid-template-columns: repeat(2,1fr); }
+    .obj-row { grid-template-columns: 1fr; }
+    .kpi-mini-row { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-top">
+    <div class="logo-badge">718</div>
+    <div class="header-tag">Plan de Prospection · 2026</div>
+  </div>
+  <h1>Prospection <span>718Digital</span><br>par Pôle Métier</h1>
+  <p>Guide complet d'acquisition client — cibles, scripts, séquences et outils pour chaque pôle de l'agence.</p>
+</div>
+
+<!-- KPI GLOBAUX -->
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-n">5</div><div class="kpi-l">Pôles actifs</div></div>
+  <div class="kpi"><div class="kpi-n">120+</div><div class="kpi-l">Cibles identifiées</div></div>
+  <div class="kpi"><div class="kpi-n">8</div><div class="kpi-l">Canaux de contact</div></div>
+  <div class="kpi"><div class="kpi-n">FCFA</div><div class="kpi-l">Devise · TVA 18%</div></div>
+</div>
+
+<!-- NAVIGATION POLES -->
+<div class="pole-nav">
+  <button class="pole-btn active" data-pole="1" onclick="showPole(1)">
+    <span class="dot"></span> 718digi-concept
+  </button>
+  <button class="pole-btn" data-pole="2" onclick="showPole(2)">
+    <span class="dot"></span> 718digitalisation
+  </button>
+  <button class="pole-btn" data-pole="3" onclick="showPole(3)">
+    <span class="dot"></span> 718digi-print
+  </button>
+  <button class="pole-btn" data-pole="4" onclick="showPole(4)">
+    <span class="dot"></span> 718digi-shop
+  </button>
+  <button class="pole-btn" data-pole="5" onclick="showPole(5)">
+    <span class="dot"></span> 718Event
+  </button>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════
+     POLE 1 — 718DIGI-CONCEPT
+═══════════════════════════════════════ -->
+<div id="pole-1" class="pole-panel active">
+
+  <div class="pole-header" style="background:rgba(124,58,237,0.07);border-color:rgba(124,58,237,0.3)">
+    <div class="pole-icon">🧠</div>
+    <div class="pole-header-text">
+      <h2 style="color:var(--p1)">718digi-concept</h2>
+      <p>Stratégie de communication, plans de com, calendriers éditoriaux, identité de marque, briefs créatifs. Le pôle cerveau de l'agence.</p>
+      <div class="pole-stats">
+        <div class="pole-stat" style="color:var(--p1)">Ticket moyen : 75K–500K FCFA</div>
+        <div class="pole-stat" style="color:var(--p1)">Cycle vente : 7–21 jours</div>
+        <div class="pole-stat" style="color:var(--p1)">Récurrence : Haute</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-mini-row">
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p1)">24</div><div class="kpi-mini-l">Cibles prioritaires</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p1)">WhatsApp</div><div class="kpi-mini-l">Canal principal</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p1)">Mensuel</div><div class="kpi-mini-l">Récurrence idéale</div></div>
+  </div>
+
+  <div class="grid-2">
+    <!-- CIBLES -->
+    <div class="card">
+      <div class="card-header" style="color:var(--p1)">
+        <span class="ico">🎯</span> Cibles prioritaires
+      </div>
+      <div class="card-body">
+        <ul class="prospect-list">
+          <li>
+            <div>
+              <span class="prospect-name">PME & Commerces locaux</span>
+              <span class="prospect-desc">Boutiques, restaurants, salons — besoin de visibilité et de stratégie de contenu</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="prospect-name">Organisateurs d'événements</span>
+              <span class="prospect-desc">Mariages, concerts, galas — besoin de plan com complet avant chaque event</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="prospect-name">Candidats politiques & élus</span>
+              <span class="prospect-desc">Campagnes, image publique, communication institutionnelle</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="prospect-name">ONG & Associations</span>
+              <span class="prospect-desc">Besoin de stratégie de sensibilisation à faible budget</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="prospect-name">Artistes & Créateurs CI</span>
+              <span class="prospect-desc">Musiciens, comédiens, influenceurs — stratégie de personal branding</span>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="prospect-name">Startups Abidjan & régions</span>
+              <span class="prospect-desc">Entreprises en démarrage cherchant identité et stratégie dès le lancement</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SÉQUENCE -->
+    <div class="card">
+      <div class="card-header" style="color:var(--p1)">
+        <span class="ico">📋</span> Séquence de prospection
+      </div>
+      <div class="card-body">
+        <ul class="steps">
+          <li>
+            <div class="step-num" style="background:var(--p1l);color:var(--p1)">1</div>
+            <div class="step-txt">
+              <strong>Audit gratuit express</strong>
+              <span>Analyser leur présence actuelle — réseaux, site, message de marque. Préparer 3 observations concrètes avant le contact.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p1l);color:var(--p1)">2</div>
+            <div class="step-txt">
+              <strong>Contact WhatsApp personnalisé</strong>
+              <span>Message court avec 1 observation précise sur leur communication + proposition de call 15min. Jamais un copier-coller.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p1l);color:var(--p1)">3</div>
+            <div class="step-txt">
+              <strong>Réunion de découverte</strong>
+              <span>Présenter le questionnaire 718digi-concept. Identifier les vrais objectifs derrière les besoins exprimés.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p1l);color:var(--p1)">4</div>
+            <div class="step-txt">
+              <strong>Brief PDF + Devis sous 24h</strong>
+              <span>Livrer un brief professionnel qui montre déjà la valeur de l'agence. Le devis est la continuité logique.</span>
+            </div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p1l);color:var(--p1)">5</div>
+            <div class="step-txt">
+              <strong>Relance J+3 si silence</strong>
+              <span>WhatsApp + ajout d'un exemple de résultat client similaire. J+7 = dernier rappel + offre limitée.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- SCRIPT -->
+    <div class="card">
+      <div class="card-header" style="color:var(--p1)">
+        <span class="ico">💬</span> Script WhatsApp d'approche
+      </div>
+      <div class="card-body">
+        <div class="script-box">
+          <p>Bonjour [Prénom], je suis ForceT de 718Digital à Abidjan. J'ai regardé votre page [nom page] et j'ai remarqué que votre communication pourrait être structurée différemment pour attirer plus de clients. On a justement aidé [secteur similaire] à doubler son engagement en 30 jours avec un plan de communication simple. Est-ce qu'on peut faire un point rapide de 15min cette semaine ? Je vous prépare quelque chose de concret avant notre échange.</p>
+        </div>
+        <div class="tags">
+          <span class="tag">Personnalisé</span>
+          <span class="tag">Preuve sociale</span>
+          <span class="tag">Urgence douce</span>
+          <span class="tag">Valeur avant vente</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- OBJECTIONS -->
+    <div class="card">
+      <div class="card-header" style="color:var(--p1)">
+        <span class="ico">🛡️</span> Objections fréquentes
+      </div>
+      <div class="card-body">
+        <div class="obj-row">
+          <div class="obj-card">
+            <div class="obj-q">"C'est trop cher"</div>
+            <div class="obj-a">Montrer le coût de NE PAS avoir de stratégie. Proposer un pack entrée de gamme ou paiement en 2 fois.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"J'ai déjà quelqu'un"</div>
+            <div class="obj-a">Demander les résultats actuels. Proposer une 2ème opinion gratuite sur leur stratégie existante.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"Je gère moi-même"</div>
+            <div class="obj-a">Valoriser leur effort + montrer ce qu'un pro peut faire en moins de temps avec plus d'impact.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"Pas le bon moment"</div>
+            <div class="obj-a">Demander quand est LE bon moment. Proposer un démarrage léger avec un seul livrable pour commencer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTILS -->
+  <div class="card">
+    <div class="card-header" style="color:var(--p1)"><span class="ico">🔧</span> Outils de prospection</div>
+    <div class="card-body">
+      <div class="tool-grid">
+        <div class="tool"><div class="tool-dot" style="background:#25D366"></div>WhatsApp Business</div>
+        <div class="tool"><div class="tool-dot" style="background:#1877F2"></div>Facebook Pages</div>
+        <div class="tool"><div class="tool-dot" style="background:#E4405F"></div>Instagram DM</div>
+        <div class="tool"><div class="tool-dot" style="background:#0077B5"></div>LinkedIn CI</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p1)"></div>Make.com (relances auto)</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--accent)"></div>Airtable CRM</div>
+        <div class="tool"><div class="tool-dot" style="background:#FF6B6B"></div>Canva (doc présentation)</div>
+        <div class="tool"><div class="tool-dot" style="background:#4A90D9"></div>Google Meet (démo)</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════
+     POLE 2 — 718DIGITALISATION
+═══════════════════════════════════════ -->
+<div id="pole-2" class="pole-panel">
+
+  <div class="pole-header" style="background:rgba(14,165,233,0.07);border-color:rgba(14,165,233,0.3)">
+    <div class="pole-icon">📱</div>
+    <div class="pole-header-text">
+      <h2 style="color:var(--p2)">718digitalisation</h2>
+      <p>Landing pages, Meta Ads, Google My Business, Pixel Facebook, campagnes publicitaires, SEO local. Le pôle croissance digitale.</p>
+      <div class="pole-stats">
+        <div class="pole-stat" style="color:var(--p2)">Ticket moyen : 50K–300K FCFA</div>
+        <div class="pole-stat" style="color:var(--p2)">Cycle vente : 3–14 jours</div>
+        <div class="pole-stat" style="color:var(--p2)">Récurrence : Très haute</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-mini-row">
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p2)">30</div><div class="kpi-mini-l">Cibles prioritaires</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p2)">Terrain</div><div class="kpi-mini-l">Canal principal</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p2)">Mensuel</div><div class="kpi-mini-l">Gestion de budget ads</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p2)"><span class="ico">🎯</span> Cibles prioritaires</div>
+      <div class="card-body">
+        <ul class="prospect-list">
+          <li><div><span class="prospect-name">Restaurants & Maquis</span><span class="prospect-desc">Besoin de visibilité locale, Google Maps, photos, menu en ligne — clients quotidiens</span></div></li>
+          <li><div><span class="prospect-name">Salons de beauté & Coiffure</span><span class="prospect-desc">Instagram vital, Meta Ads pour attirer clientes, GMB pour les recherches locales</span></div></li>
+          <li><div><span class="prospect-name">Cliniques & Pharmacies</span><span class="prospect-desc">GMB + landing page = flux patients. Secteur à fort potentiel non exploité digitalement</span></div></li>
+          <li><div><span class="prospect-name">Agences immobilières</span><span class="prospect-desc">Facebook Ads pour annonces, landing page avec formulaire, lead generation mensuelle</span></div></li>
+          <li><div><span class="prospect-name">Écoles & Formations</span><span class="prospect-desc">Période d'inscription = besoin de campagnes urgentes. Cycle annuel prévisible</span></div></li>
+          <li><div><span class="prospect-name">Grossistes & Importateurs</span><span class="prospect-desc">Catalogue produits en ligne, WhatsApp Business API, commandes digitalisées</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p2)"><span class="ico">📋</span> Séquence de prospection</div>
+      <div class="card-body">
+        <ul class="steps">
+          <li>
+            <div class="step-num" style="background:var(--p2l);color:var(--p2)">1</div>
+            <div class="step-txt"><strong>Audit digital visible gratuit</strong><span>Vérifier : ont-ils un GMB ? Leur site est-il mobile ? Leurs ads tournent-ils ? Capture d'écran des manques.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p2l);color:var(--p2)">2</div>
+            <div class="step-txt"><strong>Visite physique ou DM Instagram</strong><span>Pour les commerces locaux : se déplacer, montrer l'audit en 5min sur place. Impact maximal.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p2l);color:var(--p2)">3</div>
+            <div class="step-txt"><strong>Démo live immédiate</strong><span>Montrer ce que leur fiche GMB pourrait ressembler. Ou lancer une mini campagne test en direct. La démo vend mieux que le discours.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p2l);color:var(--p2)">4</div>
+            <div class="step-txt"><strong>Offre packagée simple</strong><span>Pack GMB : 35K FCFA. Pack Landing + Ads : 120K FCFA. Prix nets, clairs, sans surprise.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p2l);color:var(--p2)">5</div>
+            <div class="step-txt"><strong>Contrat mensuel récurrent</strong><span>Proposer gestion mensuelle des ads : 50K–150K FCFA/mois. C'est le revenu récurrent le plus facile à vendre.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p2)"><span class="ico">💬</span> Script approche terrain</div>
+      <div class="card-body">
+        <div class="script-box">
+          <p>Bonjour, je suis de 718Digital. J'ai cherché votre restaurant sur Google Maps ce matin et je n'ai pas trouvé votre fiche. Vos concurrents [nom concurrent] ont déjà 47 avis et apparaissent en premier. On peut régler ça en 48 heures pour 35.000 francs. Vous avez 5 minutes pour qu'on regarde ensemble ?</p>
+        </div>
+        <div class="tags">
+          <span class="tag">Chiffres concrets</span>
+          <span class="tag">Concurrence nommée</span>
+          <span class="tag">Prix direct</span>
+          <span class="tag">Urgence réelle</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p2)"><span class="ico">🛡️</span> Objections fréquentes</div>
+      <div class="card-body">
+        <div class="obj-row">
+          <div class="obj-card">
+            <div class="obj-q">"Google c'est pas pour nous"</div>
+            <div class="obj-a">Montrer en temps réel combien de personnes cherchent leur type de service dans leur ville chaque mois.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"Les réseaux ça sert à rien"</div>
+            <div class="obj-a">Sortir les résultats d'un client similaire. Chiffres précis : X nouveaux clients depuis la campagne.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"Mon neveu gère ça"</div>
+            <div class="obj-a">Demander les résultats du neveu. Proposer un audit des campagnes actuelles sans engagement.</div>
+          </div>
+          <div class="obj-card">
+            <div class="obj-q">"Budget serré"</div>
+            <div class="obj-a">Commencer par le pack GMB à 35K. Montrer le ROI. Upgradé naturellement ensuite.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="color:var(--p2)"><span class="ico">🔧</span> Outils de prospection</div>
+    <div class="card-body">
+      <div class="tool-grid">
+        <div class="tool"><div class="tool-dot" style="background:#4285F4"></div>Google Maps (audit prospect)</div>
+        <div class="tool"><div class="tool-dot" style="background:#1877F2"></div>Facebook Ads Manager</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p2)"></div>Semrush / Ubersuggest (SEO)</div>
+        <div class="tool"><div class="tool-dot" style="background:#25D366"></div>WhatsApp Business</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--accent)"></div>Airtable CRM</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p2)"></div>Loom (vidéo audit envoyé)</div>
+        <div class="tool"><div class="tool-dot" style="background:#FF6B35"></div>Make.com (suivi auto)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     POLE 3 — 718DIGI-PRINT
+═══════════════════════════════════════ -->
+<div id="pole-3" class="pole-panel">
+
+  <div class="pole-header" style="background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.3)">
+    <div class="pole-icon">🖨️</div>
+    <div class="pole-header-text">
+      <h2 style="color:var(--p3)">718digi-print</h2>
+      <p>Impression grand format, bâches, flyers, kakémonos, roll-ups, textile, signalétique. Base 5.000 FCFA/m². Le pôle production physique.</p>
+      <div class="pole-stats">
+        <div class="pole-stat" style="color:var(--p3)">Ticket moyen : 25K–500K FCFA</div>
+        <div class="pole-stat" style="color:var(--p3)">Cycle vente : 1–5 jours</div>
+        <div class="pole-stat" style="color:var(--p3)">Récurrence : Événementielle</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-mini-row">
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p3)">35</div><div class="kpi-mini-l">Cibles prioritaires</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p3)">Terrain</div><div class="kpi-mini-l">Canal principal</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p3)">48h</div><div class="kpi-mini-l">Délai livraison type</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p3)"><span class="ico">🎯</span> Cibles prioritaires</div>
+      <div class="card-body">
+        <ul class="prospect-list">
+          <li><div><span class="prospect-name">Organisateurs d'événements</span><span class="prospect-desc">Bâches, banderoles, kakémonos pour chaque événement. Clients réguliers à fort volume</span></div></li>
+          <li><div><span class="prospect-name">Boutiques & Commerces</span><span class="prospect-desc">Panneaux vitrine, affiches promo, flyers de lancement ou soldes — besoin récurrent</span></div></li>
+          <li><div><span class="prospect-name">Établissements scolaires</span><span class="prospect-desc">Rentrée, journées portes ouvertes, concours — commandes prévisibles annuellement</span></div></li>
+          <li><div><span class="prospect-name">Candidats politiques</span><span class="prospect-desc">Période électorale = volume massif : affiches, t-shirts, bâches, fanions</span></div></li>
+          <li><div><span class="prospect-name">Hôtels & Restaurants</span><span class="prospect-desc">Menus imprimés, signalétique intérieure, bâches extérieures — besoin permanent</span></div></li>
+          <li><div><span class="prospect-name">Entreprises BTP & Industrie</span><span class="prospect-desc">Signalétique chantier, protection de facade, banderoles de sécurité</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p3)"><span class="ico">📋</span> Séquence de prospection</div>
+      <div class="card-body">
+        <ul class="steps">
+          <li>
+            <div class="step-num" style="background:var(--p3l);color:var(--p3)">1</div>
+            <div class="step-txt"><strong>Cartographie des zones</strong><span>Identifier les marchés, zones commerciales, quartiers d'affaires. Observer les besoins visuels existants ou manquants.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p3l);color:var(--p3)">2</div>
+            <div class="step-txt"><strong>Prospection physique ciblée</strong><span>Aller directement chez la cible avec un book d'impressions réalisées. Montrer la qualité, pas la parler.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p3l);color:var(--p3)">3</div>
+            <div class="step-txt"><strong>Devis express sur place</strong><span>Calculer le prix en 2 minutes : surface m² × 5.000 FCFA + TVA. Remise à partir de 5m² pour engager.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p3l);color:var(--p3)">4</div>
+            <div class="step-txt"><strong>Acompte 50% — production</strong><span>Lancer la production dès acompte reçu. Livraison sous 48h = argument décisif face à la concurrence.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p3l);color:var(--p3)">5</div>
+            <div class="step-txt"><strong>Fidélisation par abonnement</strong><span>Proposer un forfait mensuel impression pour les clients récurrents. Prix préférentiel contre régularité.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p3)"><span class="ico">💬</span> Script approche terrain</div>
+      <div class="card-body">
+        <div class="script-box">
+          <p>Bonjour, je passe de la part de 718Digital — on fait l'impression grand format à Abidjan. J'ai vu que votre façade n'a pas encore de bâche. Pour une bâche 3m×2m c'est 30.000 francs, prête en 48h. On inclut le design si vous n'avez pas encore vos fichiers. Je peux vous montrer des exemples qu'on a faits pour des commerces comme le vôtre ?</p>
+        </div>
+        <div class="tags">
+          <span class="tag">Prix transparent</span>
+          <span class="tag">Délai court</span>
+          <span class="tag">Design inclus</span>
+          <span class="tag">Exemples concrets</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p3)"><span class="ico">📅</span> Calendrier saisonnier</div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="tl-item key"><strong>Janvier — Rentrée</strong><span>Écoles, entreprises, associations — signalétique et affiches de démarrage</span></div>
+          <div class="tl-item key"><strong>Février-Mars — Tabaski prep</strong><span>Boutiques vêtements, commerces alimentaires — promos et signalétique</span></div>
+          <div class="tl-item"><strong>Avril-Mai — Ramadan + Korité</strong><span>Fort volume pour commerces et événements religieux</span></div>
+          <div class="tl-item key"><strong>Août — Événements estivaux</strong><span>Festivals, galas, mariages — saison haute impression</span></div>
+          <div class="tl-item key"><strong>Oct-Nov — Campagnes électorales</strong><span>Volume massif si élections en vue — préparer dès septembre</span></div>
+          <div class="tl-item"><strong>Décembre — Noël & Fin d'année</strong><span>Soldes, fêtes de fin d'année, cadeaux entreprise</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="color:var(--p3)"><span class="ico">🔧</span> Outils de prospection</div>
+    <div class="card-body">
+      <div class="tool-grid">
+        <div class="tool"><div class="tool-dot" style="background:#25D366"></div>WhatsApp catalogue produits</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p3)"></div>Book physique d'impressions</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--accent)"></div>Airtable commandes</div>
+        <div class="tool"><div class="tool-dot" style="background:#E4405F"></div>Instagram portfolio print</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p3)"></div>Calculateur devis express</div>
+        <div class="tool"><div class="tool-dot" style="background:#FF6B35"></div>Make.com (bons commande auto)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     POLE 4 — 718DIGI-SHOP
+═══════════════════════════════════════ -->
+<div id="pole-4" class="pole-panel">
+
+  <div class="pole-header" style="background:rgba(16,185,129,0.07);border-color:rgba(16,185,129,0.3)">
+    <div class="pole-icon">🛒</div>
+    <div class="pole-header-text">
+      <h2 style="color:var(--p4)">718digi-shop</h2>
+      <p>Boutique digitale : créations IA sur mesure, PDFs téléchargeables, outils tech, templates. Le pôle produits et revenus passifs.</p>
+      <div class="pole-stats">
+        <div class="pole-stat" style="color:var(--p4)">Ticket moyen : 500–50K FCFA</div>
+        <div class="pole-stat" style="color:var(--p4)">Cycle vente : Instantané</div>
+        <div class="pole-stat" style="color:var(--p4)">Volume : Masse</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-mini-row">
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p4)">∞</div><div class="kpi-mini-l">Audience cible</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p4)">Réseaux</div><div class="kpi-mini-l">Canal principal</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p4)">Passif</div><div class="kpi-mini-l">Revenu PDF & templates</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p4)"><span class="ico">🎯</span> Cibles par catégorie produit</div>
+      <div class="card-body">
+        <ul class="prospect-list">
+          <li><div><span class="prospect-name">PDFs Business & Marketing</span><span class="prospect-desc">Entrepreneurs, freelances, étudiants en gestion CI — guides pratiques downloadables</span></div></li>
+          <li><div><span class="prospect-name">Pack prompts IA créatifs</span><span class="prospect-desc">Community managers, graphistes, créateurs de contenu Afrique francophone</span></div></li>
+          <li><div><span class="prospect-name">Templates & formations</span><span class="prospect-desc">Agences locales, auto-entrepreneurs qui veulent professionnaliser leur communication</span></div></li>
+          <li><div><span class="prospect-name">Créations IA sur mesure</span><span class="prospect-desc">Tout client ayant besoin d'un visuel, jingle, voix off ou vidéo sans contrat long terme</span></div></li>
+          <li><div><span class="prospect-name">Matériel tech & outils</span><span class="prospect-desc">Professionnels créatifs, youtubers, podcasters CI cherchant le meilleur matériel</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p4)"><span class="ico">📋</span> Stratégie d'acquisition boutique</div>
+      <div class="card-body">
+        <ul class="steps">
+          <li>
+            <div class="step-num" style="background:var(--p4l);color:var(--p4)">1</div>
+            <div class="step-txt"><strong>Contenu éducatif gratuit</strong><span>Publier des mini-guides, astuces IA, conseils marketing sur les réseaux. Attirer l'audience avant de vendre.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p4l);color:var(--p4)">2</div>
+            <div class="step-txt"><strong>Lead magnet PDF gratuit</strong><span>Offrir 1 PDF gratuit en échange de l'email/WhatsApp. Exemple : "10 prompts Midjourney pour l'Afrique"</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p4l);color:var(--p4)">3</div>
+            <div class="step-txt"><strong>Séquence WhatsApp automatisée</strong><span>J+1 : contenu de valeur. J+3 : témoignage client. J+7 : offre produit premium. Automatisé via Make.com</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p4l);color:var(--p4)">4</div>
+            <div class="step-txt"><strong>Collaborations influenceurs CI</strong><span>Offrir produits gratuits à des créateurs en échange de reviews. ROI démultiplié sur l'audience.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p4l);color:var(--p4)">5</div>
+            <div class="step-txt"><strong>Programme affilié simple</strong><span>10-20% de commission pour tout revendeur qui ramène un acheteur. Réseau de vente décentralisé.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="color:var(--p4)"><span class="ico">💬</span> Script post Instagram produit</div>
+    <div class="card-body">
+      <div class="script-box">
+        <p>Tu passes des heures à chercher les bons prompts pour Midjourney ? On a compilé les 50 meilleurs prompts testés pour créer des visuels qui convertissent — spécialement adaptés au contexte africain et ivoirien. Téléchargement immédiat. 2.500 FCFA. Lien en bio 👆</p>
+      </div>
+      <div class="tags">
+        <span class="tag">Problème identifié</span>
+        <span class="tag">Solution claire</span>
+        <span class="tag">Prix bas friction</span>
+        <span class="tag">CTA immédiat</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="color:var(--p4)"><span class="ico">🔧</span> Outils de vente boutique</div>
+    <div class="card-body">
+      <div class="tool-grid">
+        <div class="tool"><div class="tool-dot" style="background:var(--p4)"></div>WooCommerce / Shopify</div>
+        <div class="tool"><div class="tool-dot" style="background:#25D366"></div>WhatsApp catalogue</div>
+        <div class="tool"><div class="tool-dot" style="background:#FFCE00"></div>MTN MoMo (paiement)</div>
+        <div class="tool"><div class="tool-dot" style="background:#0055A5"></div>Moov Money</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--accent)"></div>Make.com (livraison auto)</div>
+        <div class="tool"><div class="tool-dot" style="background:#E4405F"></div>Instagram Shopping</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p4)"></div>Gumroad (PDF vente)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     POLE 5 — 718EVENT
+═══════════════════════════════════════ -->
+<div id="pole-5" class="pole-panel">
+
+  <div class="pole-header" style="background:rgba(236,72,153,0.07);border-color:rgba(236,72,153,0.3)">
+    <div class="pole-icon">🎪</div>
+    <div class="pole-header-text">
+      <h2 style="color:var(--p5)">718Event</h2>
+      <p>Production événementielle complète : organisation, communication, décoration, logistique, couverture médiatique. Le pôle prestige.</p>
+      <div class="pole-stats">
+        <div class="pole-stat" style="color:var(--p5)">Ticket moyen : 200K–5M FCFA</div>
+        <div class="pole-stat" style="color:var(--p5)">Cycle vente : 30–90 jours</div>
+        <div class="pole-stat" style="color:var(--p5)">Récurrence : Saisonnière</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="kpi-mini-row">
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p5)">20</div><div class="kpi-mini-l">Cibles prioritaires</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p5)">Réseau</div><div class="kpi-mini-l">Canal principal</div></div>
+    <div class="kpi-mini"><div class="kpi-mini-n" style="color:var(--p5)">Haut</div><div class="kpi-mini-l">Ticket moyen</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p5)"><span class="ico">🎯</span> Cibles prioritaires</div>
+      <div class="card-body">
+        <ul class="prospect-list">
+          <li><div><span class="prospect-name">Entreprises & Groupes industriels</span><span class="prospect-desc">Séminaires, team building, lancements de produits, galas annuels — budgets conséquents</span></div></li>
+          <li><div><span class="prospect-name">Mairies & Collectivités locales</span><span class="prospect-desc">Fêtes municipales, journées culturelles, commémorations — contrats institutionnels</span></div></li>
+          <li><div><span class="prospect-name">ONG & Institutions internationales</span><span class="prospect-desc">Conférences, ateliers, cérémonies de remise de prix — partenariats récurrents</span></div></li>
+          <li><div><span class="prospect-name">Organisateurs de mariages premium</span><span class="prospect-desc">Cérémonies haut de gamme — package complet com + décor + impression + couverture</span></div></li>
+          <li><div><span class="prospect-name">Artistes & Managers</span><span class="prospect-desc">Concerts, tournées, showcases — communication complète et production visuelle</span></div></li>
+          <li><div><span class="prospect-name">Promoteurs immobiliers</span><span class="prospect-desc">Lancement de programmes, portes ouvertes, cérémonies de remise de clés</span></div></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p5)"><span class="ico">📋</span> Séquence de prospection</div>
+      <div class="card-body">
+        <ul class="steps">
+          <li>
+            <div class="step-num" style="background:var(--p5l);color:var(--p5)">1</div>
+            <div class="step-txt"><strong>Portfolio événements réalisés</strong><span>Constituer un book vidéo premium des meilleurs événements produits. C'est la carte de visite absolue pour ce pôle.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p5l);color:var(--p5)">2</div>
+            <div class="step-txt"><strong>Networking ciblé</strong><span>Fréquenter les chambres de commerce, réunions patronales, événements institutionnels. Être visible là où les décideurs sont.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p5l);color:var(--p5)">3</div>
+            <div class="step-txt"><strong>Proposition sur mesure</strong><span>Jamais un devis standard. Toujours une proposition qui montre qu'on a compris LEUR événement, LEURS invités, LEUR image.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p5l);color:var(--p5)">4</div>
+            <div class="step-txt"><strong>Réunion de cadrage payante</strong><span>Pour les grands comptes : facturer la réunion de cadrage (incluse si contrat signé). Filtre les prospects non sérieux.</span></div>
+          </li>
+          <li>
+            <div class="step-num" style="background:var(--p5l);color:var(--p5)">5</div>
+            <div class="step-txt"><strong>Partenariats prescripteurs</strong><span>Traiteurs, photographes, DJ, locations de salles. Chaque prescripteur = source régulière de leads qualifiés.</span></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header" style="color:var(--p5)"><span class="ico">💬</span> Script email/LinkedIn grandes entreprises</div>
+      <div class="card-body">
+        <div class="script-box">
+          <p>Bonjour [Prénom], je suis ForceT de 718Digital. Nous avons produit la communication complète du N'Galewa Color 2 — un festival qui a mobilisé plusieurs centaines de participants à Arrah avec sponsors institutionnels. Je vois que [Entreprise] organise régulièrement des événements de [type]. Est-ce qu'on peut partager notre approche lors d'un échange de 20 minutes ? Je peux vous faire parvenir notre book événementiel avant notre appel.</p>
+        </div>
+        <div class="tags">
+          <span class="tag">Référence concrète</span>
+          <span class="tag">Preuve d'échelle</span>
+          <span class="tag">Personnalisation</span>
+          <span class="tag">Book en amorce</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header" style="color:var(--p5)"><span class="ico">📅</span> Pipeline événementiel annuel</div>
+      <div class="card-body">
+        <div class="timeline">
+          <div class="tl-item key"><strong>Fév–Mar · Prospection saison sèche</strong><span>Contacter les entreprises pour leurs galas et séminaires de milieu d'année</span></div>
+          <div class="tl-item"><strong>Avr–Mai · Mariages & cérémonies</strong><span>Saison des mariages et fêtes religieuses — packages événementiels complets</span></div>
+          <div class="tl-item key"><strong>Juin–Juil · Entreprises fin S1</strong><span>Bilan semestriel, team building, lancements produits avant l'été</span></div>
+          <div class="tl-item key"><strong>Août–Sep · Festivals & culturel</strong><span>Saison haute événements extérieurs, festivals, concerts</span></div>
+          <div class="tl-item"><strong>Oct–Nov · Saison institutionnelle</strong><span>Mairies, ONG, institutions — événements annuels fin d'année</span></div>
+          <div class="tl-item key"><strong>Décembre · Galas et cérémonies</strong><span>La saison la plus lucrative — réserver les clients en septembre</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header" style="color:var(--p5)"><span class="ico">🔧</span> Outils de prospection événementiel</div>
+    <div class="card-body">
+      <div class="tool-grid">
+        <div class="tool"><div class="tool-dot" style="background:#0077B5"></div>LinkedIn décideurs</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p5)"></div>Book PDF événementiel</div>
+        <div class="tool"><div class="tool-dot" style="background:#25D366"></div>WhatsApp VIP</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--p5)"></div>Réseaux prescripteurs</div>
+        <div class="tool"><div class="tool-dot" style="background:var(--accent)"></div>Airtable pipeline deals</div>
+        <div class="tool"><div class="tool-dot" style="background:#4A90D9"></div>PandaDoc (propositions)</div>
+        <div class="tool"><div class="tool-dot" style="background:#FF6B35"></div>Make.com (suivi deals)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="footer">
+  <span>718DIGITAL</span> · Plan de Prospection 2026 · Abidjan · Côte d'Ivoire
+</div>
+
+<script>
+function showPole(n) {
+  document.querySelectorAll('.pole-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.pole-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pole-' + n).classList.add('active');
+  document.querySelector('[data-pole="' + n + '"]').classList.add('active');
+}
+</script>
+</body>
+</html>
